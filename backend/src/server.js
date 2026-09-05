@@ -65,10 +65,10 @@ app.use(notFoundHandler);
 // Centralized Error Handler Middleware
 app.use(errorHandler);
 
-// Start HTTP Server only when executing standalone (not during test suites)
-const isTestEnv = process.env.NODE_ENV === 'test' || process.argv.some((arg) => arg.includes('test'));
+// Start HTTP Server only when executing standalone (not during serverless/test environments)
+const isServerless = process.env.VERCEL === '1' || process.env.NODE_ENV === 'test' || process.argv.some((arg) => arg.includes('test'));
 
-if (!isTestEnv) {
+if (!isServerless) {
   const server = app.listen(env.port, () => {
     console.log(`🚀 Backend API Server running in [${env.nodeEnv}] mode on http://localhost:${env.port}`);
     console.log(`🏥 Health Check available at http://localhost:${env.port}/api/v1/health`);
