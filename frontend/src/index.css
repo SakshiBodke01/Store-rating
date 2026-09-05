@@ -1,0 +1,877 @@
+:root {
+  /* ==========================================================================
+     STORESPHERE MODERN RETAIL BRAND PALETTE (Human Product Design System)
+     60% White/Cream, 25% Forest Green, 10% Coral, 5% Gold/Status
+     ========================================================================== */
+
+  --forest-green: #176B52;       /* Primary buttons, active nav, main headings */
+  --dark-forest: #125540;        /* Hover states, strong text accents */
+  --coral-terracotta: #E76F51;   /* Secondary CTAs, highlights, notifications, small brand accents */
+  --soft-sage: #DDEDE5;          /* Selected category background, secondary badges */
+  --warm-cream: #FAF8F3;         /* Main application / page background */
+  --white: #FFFFFF;              /* Cards, tables, search containers, header, modals */
+  --deep-charcoal: #1F2933;      /* Primary text and headings */
+  --slate-gray: #64748B;         /* Secondary text, descriptions, metadata */
+  --rating-gold: #E9A23B;        /* ONLY for star icons and rating scores */
+  --success-green: #2E9B68;      /* Verified badges text & success indicators */
+  --verified-bg: #E8F5EE;        /* Verified badge pill background */
+  --error-red: #D9534F;          /* Errors, delete actions, warnings */
+  
+  --border-color: #E5E7EB;       /* Preferred subtle neutral border */
+  --border-subtle: #F3F4F6;
+  --table-hover: #F4F8F5;        /* Very subtle table row hover state */
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-pill: 20px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 2px 4px 0 rgba(0, 0, 0, 0.02), 0 0 0 1px #E5E7EB;
+  --shadow-popover: 0 12px 28px -6px rgba(31, 41, 51, 0.12), 0 0 0 1px #E5E7EB;
+  
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--warm-cream);
+  color: var(--deep-charcoal);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--forest-green);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+a:hover {
+  color: var(--dark-forest);
+  text-decoration: underline;
+}
+
+/* App Shell & Main Layout */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--warm-cream);
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.25rem 1.5rem;
+}
+
+/* ==========================================================================
+   HEADER NAVBAR (Clean White, Subtle Border, Forest Green Brand Logo)
+   ========================================================================== */
+.navbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-icon-box {
+  width: 40px;
+  height: 40px;
+  background: var(--forest-green);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 2px 6px rgba(23, 107, 82, 0.2);
+  transition: background-color 0.2s ease;
+}
+.navbar-brand-wrapper:hover .brand-icon-box {
+  background-color: var(--dark-forest);
+}
+
+.brand-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--forest-green);
+  letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--slate-gray);
+  font-weight: 500;
+}
+
+/* Portal Tag (Coral Terracotta Accent) */
+.brand-portal-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  background: #FDF2F0;
+  color: var(--coral-terracotta);
+  border-radius: var(--radius-pill);
+  border: 1px solid #FADCD5;
+}
+
+/* User Widget on Navbar Right */
+.user-widget-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.95rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-avatar-circle {
+  width: 34px;
+  height: 34px;
+  background: var(--soft-sage);
+  color: var(--forest-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  border: 1px solid rgba(23, 107, 82, 0.2);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--deep-charcoal);
+  line-height: 1.2;
+}
+
+.user-email-text {
+  font-size: 0.7rem;
+  color: var(--slate-gray);
+}
+
+.role-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-pill);
+}
+
+.role-badge-admin {
+  background: #FDF2F0;
+  color: var(--coral-terracotta);
+  border: 1px solid #FADCD5;
+}
+
+.role-badge-owner {
+  background: #FFFBEB;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+
+.role-badge-user {
+  background: var(--soft-sage);
+  color: var(--forest-green);
+  border: 1px solid rgba(23, 107, 82, 0.2);
+}
+
+/* Header Buttons */
+.icon-btn-subtle {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slate-gray);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.icon-btn-subtle:hover {
+  background: var(--warm-cream);
+  color: var(--forest-green);
+  border-color: var(--forest-green);
+}
+
+.btn-logout-subtle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 1px solid #FADCD5;
+  color: var(--coral-terracotta);
+  border-radius: 8px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-logout-subtle:hover {
+  background: #FDF2F0;
+}
+
+/* ==========================================================================
+   PAGE HEADER & ACTION BUTTONS
+   ========================================================================== */
+.page-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.page-title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--deep-charcoal);
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  font-size: 0.875rem;
+  color: var(--slate-gray);
+  margin-top: 0.25rem;
+}
+
+.action-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+/* ==========================================================================
+   BUTTONS (Deep Forest Green Primary #176B52, Hover #125540)
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  height: 42px;
+  padding: 0 1.35rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: var(--forest-green);
+  color: var(--white);
+  box-shadow: 0 2px 6px rgba(23, 107, 82, 0.2);
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--dark-forest);
+  box-shadow: 0 4px 10px rgba(18, 85, 64, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--white);
+  color: var(--deep-charcoal);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--warm-cream);
+  border-color: var(--forest-green);
+  color: var(--forest-green);
+}
+
+.btn-danger {
+  background-color: var(--error-red);
+  color: var(--white);
+}
+.btn-danger:hover:not(:disabled) {
+  background-color: #C9302C;
+}
+
+.btn-sm {
+  height: 36px;
+  padding: 0 0.95rem;
+  font-size: 0.8125rem;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   STAT CARDS GRID (White Cards, Subtle Borders, Distinct Context Icons)
+   ========================================================================== */
+.stat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.35rem;
+  margin-bottom: 2.25rem;
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.6rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--forest-green);
+}
+
+.stat-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--slate-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-family: var(--font-heading);
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: var(--deep-charcoal);
+  line-height: 1.1;
+  margin-top: 0.35rem;
+}
+
+.stat-subtext {
+  font-size: 0.75rem;
+  color: var(--forest-green);
+  margin-top: 0.35rem;
+  font-weight: 600;
+}
+
+/* Icon Box Color Rules according to prompt:
+   - Total Users: Forest Green #176B52
+   - Registered Stores: Coral #E76F51
+   - Total Reviews: Rating Gold #E9A23B
+*/
+.stat-icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--soft-sage);
+  color: var(--forest-green);
+  border: 1px solid rgba(23, 107, 82, 0.2);
+}
+
+/* Custom specific icon box styles */
+.stat-icon-box.icon-users {
+  background: var(--soft-sage);
+  color: var(--forest-green);
+  border-color: rgba(23, 107, 82, 0.25);
+}
+
+.stat-icon-box.icon-stores {
+  background: #FDF2F0;
+  color: var(--coral-terracotta);
+  border-color: #FADCD5;
+}
+
+.stat-icon-box.icon-reviews {
+  background: #FFFBEB;
+  color: var(--rating-gold);
+  border-color: #FDE68A;
+}
+
+/* ==========================================================================
+   DIRECTORY TABS (Active: Forest Green Text & Bottom Border, Inactive: Slate Gray)
+   ========================================================================== */
+.directory-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 1.35rem;
+}
+
+.tab-button {
+  background: transparent;
+  border: none;
+  padding: 0.85rem 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--slate-gray);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease;
+  font-family: inherit;
+}
+.tab-button:hover {
+  color: var(--deep-charcoal);
+}
+.tab-button.active {
+  color: var(--forest-green);
+}
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--forest-green);
+  border-radius: 3px 3px 0 0;
+}
+
+/* ==========================================================================
+   CATEGORY FILTERS (Active: Soft Sage #DDEDE5 + Forest Green #176B52)
+   ========================================================================== */
+.category-filter-chip {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+/* Active category: Soft Sage bg #DDEDE5, Forest Green text #176B52, Forest Green border */
+.category-filter-chip.active {
+  background-color: var(--soft-sage);
+  color: var(--forest-green);
+  border: 1px solid var(--forest-green);
+}
+
+/* Inactive category: White bg #FFFFFF, light gray border #E5E7EB, dark charcoal text #1F2933 */
+.category-filter-chip.inactive {
+  background-color: var(--white);
+  color: var(--deep-charcoal);
+  border: 1px solid var(--border-color);
+}
+.category-filter-chip.inactive:hover {
+  border-color: var(--forest-green);
+  color: var(--forest-green);
+}
+
+/* ==========================================================================
+   SEARCH BAR & FILTERS CONTAINER (White background, Forest Green focus)
+   ========================================================================== */
+.search-filter-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 0.95rem 1.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.35rem;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+.pill-search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.pill-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--slate-gray);
+  pointer-events: none;
+}
+
+.pill-search-input-wrapper input {
+  width: 100%;
+  height: 42px;
+  padding-left: 44px;
+  padding-right: 16px;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  color: var(--deep-charcoal);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+.pill-search-input-wrapper input:focus {
+  border-color: var(--forest-green);
+  box-shadow: 0 0 0 2px rgba(23, 107, 82, 0.15);
+}
+
+.filter-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ==========================================================================
+   FORMATTED STORE TABLE (White Background, Hover #F4F8F5, Verified #E8F5EE)
+   ========================================================================== */
+.table-card-wrapper {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.storesphere-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.storesphere-table th {
+  background: var(--warm-cream);
+  padding: 0.95rem 1.35rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--deep-charcoal);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.storesphere-table td {
+  padding: 1.1rem 1.35rem;
+  font-size: 0.875rem;
+  color: var(--deep-charcoal);
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.storesphere-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.storesphere-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.storesphere-table tbody tr:hover {
+  background-color: var(--table-hover);
+}
+
+.store-name-title {
+  font-weight: 700;
+  color: var(--deep-charcoal);
+  font-size: 0.95rem;
+}
+
+.store-id-sub {
+  font-size: 0.75rem;
+  color: var(--slate-gray);
+  margin-top: 0.15rem;
+}
+
+/* Verified Pill Badge (#E8F5EE background, #2E9B68 text) */
+.verified-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background-color: var(--verified-bg);
+  color: var(--success-green);
+  border: 1px solid #C6EADB;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+
+/* ==========================================================================
+   CLEAN RATING DISPLAY (Rating Gold #E9A23B for Stars & Score Text ONLY)
+   ========================================================================== */
+.rating-display-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.rating-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.rating-score-text,
+.rating-badge-score {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--rating-gold);
+  line-height: 1;
+}
+
+.rating-badge-sub {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--slate-gray);
+}
+
+.rating-stars-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.interactive-rating-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.interactive-rating-label {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--rating-gold);
+  background-color: var(--warm-cream);
+  border: 1px solid #FDE68A;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-md);
+}
+
+/* ==========================================================================
+   FORM INPUTS, SELECTS & CONTROLS
+   ========================================================================== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--deep-charcoal);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.form-input, .form-select, .input-field, .select-field {
+  width: 100%;
+  height: 42px;
+  padding: 0 0.95rem;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--deep-charcoal);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.form-input:focus, .form-select:focus, .input-field:focus, .select-field:focus {
+  border-color: var(--forest-green);
+  box-shadow: 0 0 0 2px rgba(23, 107, 82, 0.15);
+  background: var(--white);
+}
+
+.form-input.is-invalid, .form-select.is-invalid {
+  border-color: var(--error-red);
+  background: #FDF2F0;
+}
+
+.form-error, .input-error {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--error-red);
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   MODAL WINDOW (White Container, Warm Cream Header, Clean Layout)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 41, 51, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+  animation: fadeInModal 0.15s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-card-container, .modal-content, .modal-dialog {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-popover);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 1.25rem 1.6rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--warm-cream);
+}
+
+.modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--deep-charcoal);
+  letter-spacing: -0.01em;
+}
+
+.modal-close-btn {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slate-gray);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.modal-close-btn:hover {
+  background: #FDF2F0;
+  color: var(--error-red);
+  border-color: #FADCD5;
+}
+
+.modal-body {
+  padding: 1.6rem;
+  background: var(--white);
+}
+
+.modal-footer {
+  padding: 1rem 1.6rem;
+  background: var(--warm-cream);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Auth Centered Cards */
+.auth-page-wrapper {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-card);
+}
+
+.auth-title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--deep-charcoal);
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 0.875rem;
+  color: var(--slate-gray);
+  text-align: center;
+  margin-top: 0.35rem;
+  margin-bottom: 1.75rem;
+}

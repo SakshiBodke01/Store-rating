@@ -1,0 +1,74 @@
+// Store Rating Platform - Prisma Schema (SQLite zero-config local database)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         String   @default("USER")
+  address      String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  ownedStores Store[]  @relation("StoreOwner")
+  ratings     Rating[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model Store {
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  address     String
+  description String?
+  category    String?  @default("Retail & Services")
+  phone       String?
+  isVerified  Boolean  @default(true) @map("is_verified")
+  ownerId     String   @map("owner_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  owner   User     @relation("StoreOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  ratings Rating[]
+
+  @@index([name])
+  @@index([ownerId])
+  @@index([address])
+  @@index([category])
+  @@map("stores")
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  rating    Int // Value from 1 to 5
+  comment   String?
+  userId    String   @map("user_id")
+  storeId   String   @map("store_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  // Enforce unique rating per user/store pair
+  @@unique([userId, storeId])
+  @@index([storeId])
+  @@index([userId])
+  @@index([rating])
+  @@map("ratings")
+}
