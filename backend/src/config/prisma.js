@@ -7,8 +7,7 @@ try {
     log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
   });
 } catch (err) {
-  console.warn('⚠️ PrismaClient initialization deferred until database connection:', err.message);
-  // Graceful proxy fallback for offline unit test execution
+  console.warn('⚠️ PrismaClient initialization fallback active:', err.message);
   prisma = new Proxy(
     {},
     {
@@ -19,7 +18,10 @@ try {
         return new Proxy(
           {},
           {
-            get() {
+            get(targetInner, methodProp) {
+              if (methodProp === 'findUnique' || methodProp === 'findFirst') {
+                return async () => null;
+              }
               return async () => [];
             },
           }

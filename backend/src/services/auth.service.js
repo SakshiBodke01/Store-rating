@@ -65,7 +65,7 @@ export class AuthService {
       where: { email: normalizedEmail },
     });
 
-    if (!user) {
+    if (!user || Array.isArray(user) || typeof user !== 'object' || !user.passwordHash) {
       throw ApiError.unauthorized('Invalid email address or password');
     }
 

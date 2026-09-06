@@ -30,7 +30,10 @@ export function errorHandler(err, req, res, _next) {
   // Fallback for non-ApiError instances
   if (!(error instanceof ApiError)) {
     const statusCode = error.statusCode || error.status || 500;
-    const message = error.message || 'Internal Server Error';
+    let message = error.message || 'Internal Server Error';
+    if (message.includes('DATABASE_URL') || message.includes('PrismaClient') || message.includes('denied for user')) {
+      message = 'Database connection error: Please set DATABASE_URL in Vercel Environment Variables.';
+    }
     error = new ApiError(statusCode, message, 'INTERNAL_SERVER_ERROR', null);
   }
 
