@@ -17,9 +17,9 @@ function validateEnv() {
   const missing = requiredEnvVars.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
-    console.error(`❌ FATAL ENVIRONMENT ERROR: Missing required environment variables: ${missing.join(', ')}`);
-    console.error(`Please configure them in backend/.env before starting the server.`);
-    if (process.env.NODE_ENV !== 'test') {
+    console.warn(`⚠️ ENVIRONMENT NOTICE: Missing environment variables: ${missing.join(', ')}`);
+    console.warn(`Please configure them in Vercel Environment Variables or backend/.env.`);
+    if (process.env.NODE_ENV !== 'test' && process.env.VERCEL !== '1') {
       process.exit(1);
     }
   }
