@@ -16,11 +16,14 @@ const allowedOrigins = [env.clientOrigin, 'http://localhost:5173', 'http://127.0
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, postman) or matching allowed origins / local dev ports
+    // Allow requests with no origin, Vercel deployments (*.vercel.app), allowed origins, or local dev ports
     if (
       !origin ||
+      process.env.VERCEL === '1' ||
+      process.env.NODE_ENV === 'production' ||
       allowedOrigins.includes(origin) ||
-      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin) ||
+      /\.vercel\.app$/.test(origin)
     ) {
       callback(null, true);
     } else {
