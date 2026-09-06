@@ -56,8 +56,10 @@ app.get('/', (req, res) => {
   });
 });
 
-// Mount API v1 Routes
+// Mount API v1 Routes (with serverless alias fallbacks for Vercel)
 app.use('/api/v1', apiRouter);
+app.use('/v1', apiRouter);
+app.use('/api', apiRouter);
 
 // 404 Unmatched Route Handler
 app.use(notFoundHandler);

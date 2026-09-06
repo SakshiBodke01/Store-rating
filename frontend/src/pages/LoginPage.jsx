@@ -47,11 +47,81 @@ export function LoginPage() {
   return (
     <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div className="panel" style={{ maxWidth: '400px', width: '100%' }}>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>Sign In</h1>
-          <p style={{ color: 'var(--text-sub)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--deep-charcoal)' }}>Sign In</h1>
+          <p style={{ color: 'var(--slate-gray)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
             Enter your credentials to access the Store Rating Platform.
           </p>
+        </div>
+
+        {/* Quick Demo Test Accounts Box */}
+        <div style={{
+          marginBottom: '1.25rem',
+          padding: '0.85rem 1rem',
+          background: 'var(--warm-cream)',
+          border: '1px solid var(--border-color)',
+          borderRadius: 'var(--radius-md)',
+          fontSize: '0.8125rem',
+        }}>
+          <div style={{ fontWeight: 700, color: 'var(--forest-green)', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span>🔑</span> Quick Demo Accounts (Click to auto-fill):
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            <button
+              type="button"
+              onClick={() => setFormData({ email: 'admin@storerating.com', password: 'Password@123' })}
+              title="Click to fill Admin account"
+              style={{
+                padding: '0.25rem 0.6rem',
+                background: '#FDF2F0',
+                color: '#E76F51',
+                border: '1px solid #FADCD5',
+                borderRadius: '12px',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontFamily: 'inherit',
+              }}
+            >
+              Admin: admin@storerating.com
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ email: 'owner@storerating.com', password: 'Password@123' })}
+              title="Click to fill Store Owner account"
+              style={{
+                padding: '0.25rem 0.6rem',
+                background: '#FFFBEB',
+                color: '#B45309',
+                border: '1px solid #FDE68A',
+                borderRadius: '12px',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontFamily: 'inherit',
+              }}
+            >
+              Owner: owner@storerating.com
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ email: 'user@storerating.com', password: 'Password@123' })}
+              title="Click to fill Normal User account"
+              style={{
+                padding: '0.25rem 0.6rem',
+                background: 'var(--soft-sage)',
+                color: 'var(--forest-green)',
+                border: '1px solid rgba(23, 107, 82, 0.25)',
+                borderRadius: '12px',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontFamily: 'inherit',
+              }}
+            >
+              User: user@storerating.com
+            </button>
+          </div>
         </div>
 
         <AlertToast message={error} type="error" onClose={() => setError('')} />
