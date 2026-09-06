@@ -35,7 +35,11 @@ async function request(endpoint, options = {}) {
         localStorage.removeItem('user');
       }
 
-      const errorMessage = data?.error?.message || response.statusText || 'An unexpected error occurred';
+      const detailsStr = data?.error?.details && Array.isArray(data.error.details) && data.error.details.length > 0
+        ? data.error.details.join(' • ')
+        : null;
+
+      const errorMessage = detailsStr || data?.error?.message || response.statusText || 'An unexpected error occurred';
       const errorDetails = data?.error?.details || null;
       const error = new Error(errorMessage);
       error.status = response.status;

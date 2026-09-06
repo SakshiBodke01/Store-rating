@@ -84,7 +84,10 @@ export function RegisterPage() {
 
       navigate('/stores', { replace: true });
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
+      const msg = err.details && Array.isArray(err.details) && err.details.length > 0
+        ? err.details.join(' • ')
+        : err.message;
+      setError(msg || 'Registration failed. Please verify your inputs.');
     } finally {
       setIsLoading(false);
     }
