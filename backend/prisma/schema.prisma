@@ -1,11 +1,11 @@
-// Store Rating Platform - Prisma Schema (SQLite zero-config local database)
+// Store Rating Platform - Prisma Schema (Supabase PostgreSQL Production Database)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
