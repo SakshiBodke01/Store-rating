@@ -71,7 +71,13 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start HTTP Server only when executing standalone (not during serverless/test environments)
-const isServerless = process.env.VERCEL === '1' || process.env.NODE_ENV === 'test' || process.argv.some((arg) => arg.includes('test'));
+const isServerless =
+  Boolean(process.env.VERCEL) ||
+  Boolean(process.env.VERCEL_ENV) ||
+  Boolean(process.env.NOW_BUILDER) ||
+  process.env.NODE_ENV === 'production' ||
+  process.env.NODE_ENV === 'test' ||
+  process.argv.some((arg) => arg.includes('test'));
 
 if (!isServerless) {
   const server = app.listen(env.port, () => {

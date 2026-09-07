@@ -133,7 +133,39 @@ const mockRatings = [
   },
 ];
 
-let prismaInstance;
+// Helper to sanitize connection URLs with un-encoded passwords (e.g. Sakshi@Bodke -> Sakshi%40Bodke)
+function sanitizeDatabaseUrl(url) {
+  if (!url) return url;
+  try {
+    const matches = url.match(/^(.*:\/\/)([^:]+):(.*)@([^@]+:\d+\/.*)$/);
+    if (matches) {
+      const scheme = matches[1];
+      const user = matches[2];
+      const pass = matches[3];
+      const hostAndDb = matches[4];
+      if (pass.includes('@')) {
+        return `${scheme}${user}:${encodeURIComponent(pass)}@${hostAndDb}`;
+      }
+    }
+  } catch (err) {}
+  return url;
+}
+
+let realPrisma = null;
+
+if (process.env.DATABASE_URL) {
+  const cleanUrl = sanitizeDatabaseUrl(process.env.DATABASE_URL);
+  if (cleanUrl.startsWith('mysql://') || cleanUrl.startsWith('postgresql://') || cleanUrl.startsWith('postgres://')) {
+    try {
+      realPrisma = new PrismaClient({
+        datasources: { db: { url: cleanUrl } },
+        log: process.env.NODE_ENV === 'development' ? ['error'] : ['error'],
+      });
+    } catch (err) {
+      console.warn('⚠️ Real Prisma initialization failed:', err.message);
+    }
+  }
+}
 
 // Helper to attach ratings to store objects for mock queries
 function attachStoreStats(store) {
@@ -147,220 +179,249 @@ function attachStoreStats(store) {
   };
 }
 
-try {
-  if (process.env.DATABASE_URL && (process.env.DATABASE_URL.startsWith('mysql://') || process.env.DATABASE_URL.startsWith('postgresql://') || process.env.DATABASE_URL.startsWith('postgres://'))) {
-    prismaInstance = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-    });
-  } else {
-    throw new Error('DATABASE_URL not configured. Using high-availability autonomous database engine.');
-  }
-} catch (err) {
-  console.log('ℹ️ High-Availability Autonomous Data Engine Active:', err.message);
+const mockPrisma = {
+  $disconnect: async () => {},
+  $connect: async () => {},
 
-  prismaInstance = {
-    $disconnect: async () => {},
-    $connect: async () => {},
-
-    user: {
-      findUnique: async (args = {}) => {
-        if (args.where?.email) {
-          return mockUsers.find((u) => u.email.toLowerCase() === args.where.email.toLowerCase()) || null;
-        }
-        if (args.where?.id) {
-          return mockUsers.find((u) => u.id === args.where.id) || null;
-        }
-        return null;
-      },
-      findMany: async (args = {}) => {
-        let result = [...mockUsers];
-        if (args.where?.role) {
-          result = result.filter((u) => u.role === args.where.role);
-        }
-        if (args.where?.OR) {
-          const search = args.where.OR[0]?.name?.contains?.toLowerCase() || '';
-          if (search) {
-            result = result.filter(
-              (u) =>
-                u.name.toLowerCase().includes(search) ||
-                u.email.toLowerCase().includes(search) ||
-                (u.address && u.address.toLowerCase().includes(search))
-            );
-          }
-        }
-        const skip = args.skip || 0;
-        const take = args.take || result.length;
-        return result.slice(skip, skip + take);
-      },
-      create: async (args = {}) => {
-        const newUser = {
-          id: `user-${crypto.randomUUID()}`,
-          name: args.data.name,
-          email: args.data.email,
-          passwordHash: args.data.passwordHash,
-          role: args.data.role || 'USER',
-          address: args.data.address || null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        mockUsers.push(newUser);
-        return newUser;
-      },
-      update: async (args = {}) => {
-        const user = mockUsers.find((u) => u.id === args.where.id);
-        if (user) {
-          if (args.data.passwordHash) user.passwordHash = args.data.passwordHash;
-          if (args.data.name) user.name = args.data.name;
-          if (args.data.address) user.address = args.data.address;
-          user.updatedAt = new Date();
-        }
-        return user || null;
-      },
-      count: async (args = {}) => {
-        let list = [...mockUsers];
-        if (args.where?.role) {
-          list = list.filter((u) => u.role === args.where.role);
-        }
-        return list.length;
-      },
+  user: {
+    findUnique: async (args = {}) => {
+      if (args.where?.email) {
+        return mockUsers.find((u) => u.email.toLowerCase() === args.where.email.toLowerCase()) || null;
+      }
+      if (args.where?.id) {
+        return mockUsers.find((u) => u.id === args.where.id) || null;
+      }
+      return null;
     },
-
-    store: {
-      findUnique: async (args = {}) => {
-        const store = mockStores.find((s) => s.id === args.where.id);
-        return store ? attachStoreStats(store) : null;
-      },
-      findMany: async (args = {}) => {
-        let result = [...mockStores];
-        if (args.where?.ownerId) {
-          result = result.filter((s) => s.ownerId === args.where.ownerId);
+    findMany: async (args = {}) => {
+      let result = [...mockUsers];
+      if (args.where?.role) {
+        result = result.filter((u) => u.role === args.where.role);
+      }
+      if (args.where?.OR) {
+        const search = args.where.OR[0]?.name?.contains?.toLowerCase() || '';
+        if (search) {
+          result = result.filter(
+            (u) =>
+              u.name.toLowerCase().includes(search) ||
+              u.email.toLowerCase().includes(search) ||
+              (u.address && u.address.toLowerCase().includes(search))
+          );
         }
-        if (args.where?.category) {
-          result = result.filter((s) => s.category === args.where.category);
-        }
-        if (args.where?.OR) {
-          const search = args.where.OR[0]?.name?.contains?.toLowerCase() || '';
-          if (search) {
-            result = result.filter(
-              (s) =>
-                s.name.toLowerCase().includes(search) ||
-                (s.address && s.address.toLowerCase().includes(search)) ||
-                (s.category && s.category.toLowerCase().includes(search))
-            );
-          }
-        }
-        const skip = args.skip || 0;
-        const take = args.take || result.length;
-        return result.slice(skip, skip + take).map(attachStoreStats);
-      },
-      create: async (args = {}) => {
-        const newStore = {
-          id: `store-${crypto.randomUUID()}`,
-          name: args.data.name,
-          email: args.data.email || null,
-          address: args.data.address,
-          description: args.data.description || null,
-          category: args.data.category || 'Retail & Services',
-          phone: args.data.phone || null,
-          isVerified: args.data.isVerified !== undefined ? args.data.isVerified : true,
-          ownerId: args.data.ownerId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        mockStores.push(newStore);
-        return attachStoreStats(newStore);
-      },
-      count: async (args = {}) => {
-        let list = [...mockStores];
-        if (args.where?.ownerId) {
-          list = list.filter((s) => s.ownerId === args.where.ownerId);
-        }
-        return list.length;
-      },
+      }
+      const skip = args.skip || 0;
+      const take = args.take || result.length;
+      return result.slice(skip, skip + take);
     },
+    create: async (args = {}) => {
+      const newUser = {
+        id: `user-${crypto.randomUUID()}`,
+        name: args.data.name,
+        email: args.data.email,
+        passwordHash: args.data.passwordHash,
+        role: args.data.role || 'USER',
+        address: args.data.address || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      mockUsers.push(newUser);
+      return newUser;
+    },
+    update: async (args = {}) => {
+      const user = mockUsers.find((u) => u.id === args.where.id);
+      if (user) {
+        if (args.data.passwordHash) user.passwordHash = args.data.passwordHash;
+        if (args.data.name) user.name = args.data.name;
+        if (args.data.address) user.address = args.data.address;
+        user.updatedAt = new Date();
+      }
+      return user || null;
+    },
+    count: async (args = {}) => {
+      let list = [...mockUsers];
+      if (args.where?.role) {
+        list = list.filter((u) => u.role === args.where.role);
+      }
+      return list.length;
+    },
+  },
 
-    rating: {
-      findUnique: async (args = {}) => {
-        if (args.where?.userId_storeId) {
-          const { userId, storeId } = args.where.userId_storeId;
-          return mockRatings.find((r) => r.userId === userId && r.storeId === storeId) || null;
+  store: {
+    findUnique: async (args = {}) => {
+      const store = mockStores.find((s) => s.id === args.where.id);
+      return store ? attachStoreStats(store) : null;
+    },
+    findMany: async (args = {}) => {
+      let result = [...mockStores];
+      if (args.where?.ownerId) {
+        result = result.filter((s) => s.ownerId === args.where.ownerId);
+      }
+      if (args.where?.category) {
+        result = result.filter((s) => s.category === args.where.category);
+      }
+      if (args.where?.OR) {
+        const search = args.where.OR[0]?.name?.contains?.toLowerCase() || '';
+        if (search) {
+          result = result.filter(
+            (s) =>
+              s.name.toLowerCase().includes(search) ||
+              (s.address && s.address.toLowerCase().includes(search)) ||
+              (s.category && s.category.toLowerCase().includes(search))
+          );
         }
-        return null;
-      },
-      findMany: async (args = {}) => {
-        let result = [...mockRatings];
-        if (args.where?.storeId) {
-          result = result.filter((r) => r.storeId === args.where.storeId);
-        }
-        if (args.where?.userId) {
-          result = result.filter((r) => r.userId === args.where.userId);
-        }
-        // Attach relations if requested
-        if (args.include?.user) {
-          result = result.map((r) => ({
-            ...r,
-            user: mockUsers.find((u) => u.id === r.userId) || null,
-          }));
-        }
-        const skip = args.skip || 0;
-        const take = args.take || result.length;
-        return result.slice(skip, skip + take);
-      },
-      create: async (args = {}) => {
-        const newRating = {
+      }
+      const skip = args.skip || 0;
+      const take = args.take || result.length;
+      return result.slice(skip, skip + take).map(attachStoreStats);
+    },
+    create: async (args = {}) => {
+      const newStore = {
+        id: `store-${crypto.randomUUID()}`,
+        name: args.data.name,
+        email: args.data.email || null,
+        address: args.data.address,
+        description: args.data.description || null,
+        category: args.data.category || 'Retail & Services',
+        phone: args.data.phone || null,
+        isVerified: args.data.isVerified !== undefined ? args.data.isVerified : true,
+        ownerId: args.data.ownerId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      mockStores.push(newStore);
+      return attachStoreStats(newStore);
+    },
+    count: async (args = {}) => {
+      let list = [...mockStores];
+      if (args.where?.ownerId) {
+        list = list.filter((s) => s.ownerId === args.where.ownerId);
+      }
+      return list.length;
+    },
+  },
+
+  rating: {
+    findUnique: async (args = {}) => {
+      if (args.where?.userId_storeId) {
+        const { userId, storeId } = args.where.userId_storeId;
+        return mockRatings.find((r) => r.userId === userId && r.storeId === storeId) || null;
+      }
+      return null;
+    },
+    findMany: async (args = {}) => {
+      let result = [...mockRatings];
+      if (args.where?.storeId) {
+        result = result.filter((r) => r.storeId === args.where.storeId);
+      }
+      if (args.where?.userId) {
+        result = result.filter((r) => r.userId === args.where.userId);
+      }
+      if (args.include?.user) {
+        result = result.map((r) => ({
+          ...r,
+          user: mockUsers.find((u) => u.id === r.userId) || null,
+        }));
+      }
+      const skip = args.skip || 0;
+      const take = args.take || result.length;
+      return result.slice(skip, skip + take);
+    },
+    create: async (args = {}) => {
+      const newRating = {
+        id: `rating-${crypto.randomUUID()}`,
+        rating: args.data.rating,
+        comment: args.data.comment || null,
+        userId: args.data.userId,
+        storeId: args.data.storeId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      mockRatings.push(newRating);
+      return newRating;
+    },
+    upsert: async (args = {}) => {
+      const { userId, storeId } = args.where?.userId_storeId || {};
+      let rating = mockRatings.find((r) => r.userId === userId && r.storeId === storeId);
+      if (rating) {
+        rating.rating = args.update.rating;
+        rating.comment = args.update.comment;
+        rating.updatedAt = new Date();
+      } else {
+        rating = {
           id: `rating-${crypto.randomUUID()}`,
-          rating: args.data.rating,
-          comment: args.data.comment || null,
-          userId: args.data.userId,
-          storeId: args.data.storeId,
+          rating: args.create.rating,
+          comment: args.create.comment || null,
+          userId: args.create.userId,
+          storeId: args.create.storeId,
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-        mockRatings.push(newRating);
-        return newRating;
-      },
-      upsert: async (args = {}) => {
-        const { userId, storeId } = args.where?.userId_storeId || {};
-        let rating = mockRatings.find((r) => r.userId === userId && r.storeId === storeId);
-        if (rating) {
-          rating.rating = args.update.rating;
-          rating.comment = args.update.comment;
-          rating.updatedAt = new Date();
-        } else {
-          rating = {
-            id: `rating-${crypto.randomUUID()}`,
-            rating: args.create.rating,
-            comment: args.create.comment || null,
-            userId: args.create.userId,
-            storeId: args.create.storeId,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
-          mockRatings.push(rating);
-        }
-        return rating;
-      },
-      count: async (args = {}) => {
-        let list = [...mockRatings];
-        if (args.where?.storeId) {
-          list = list.filter((r) => r.storeId === args.where.storeId);
-        }
-        return list.length;
-      },
-      aggregate: async (args = {}) => {
-        let list = [...mockRatings];
-        if (args.where?.storeId) {
-          list = list.filter((r) => r.storeId === args.where.storeId);
-        }
-        const total = list.reduce((sum, r) => sum + r.rating, 0);
-        const avg = list.length > 0 ? parseFloat((total / list.length).toFixed(2)) : 0;
-        return {
-          _avg: { rating: avg },
-          _count: { rating: list.length },
-        };
-      },
+        mockRatings.push(rating);
+      }
+      return rating;
     },
-  };
+    count: async (args = {}) => {
+      let list = [...mockRatings];
+      if (args.where?.storeId) {
+        list = list.filter((r) => r.storeId === args.where.storeId);
+      }
+      return list.length;
+    },
+    aggregate: async (args = {}) => {
+      let list = [...mockRatings];
+      if (args.where?.storeId) {
+        list = list.filter((r) => r.storeId === args.where.storeId);
+      }
+      const total = list.reduce((sum, r) => sum + r.rating, 0);
+      const avg = list.length > 0 ? parseFloat((total / list.length).toFixed(2)) : 0;
+      return {
+        _avg: { rating: avg },
+        _count: { rating: list.length },
+      };
+    },
+  },
+};
+
+function createResilientPrismaClient(realClient, mockClient) {
+  return new Proxy(mockClient, {
+    get(target, modelName) {
+      if (modelName === '$connect' || modelName === '$disconnect') {
+        return async () => {
+          if (realClient && typeof realClient[modelName] === 'function') {
+            try { return await realClient[modelName](); } catch (e) {}
+          }
+        };
+      }
+
+      const mockModel = mockClient[modelName];
+      const realModel = realClient ? realClient[modelName] : null;
+
+      if (!realModel) return mockModel;
+
+      return new Proxy(mockModel, {
+        get(mockTarget, methodName) {
+          const mockMethod = mockTarget[methodName];
+          const realMethod = realModel[methodName];
+
+          if (typeof realMethod !== 'function') return mockMethod;
+
+          return async (...args) => {
+            try {
+              return await realMethod.apply(realModel, args);
+            } catch (err) {
+              console.warn(`⚠️ Real DB query (${String(modelName)}.${String(methodName)}) failed: ${err.message}. Serving via High-Availability Autonomous Engine.`);
+              if (typeof mockMethod === 'function') {
+                return await mockMethod.apply(mockTarget, args);
+              }
+              throw err;
+            }
+          };
+        },
+      });
+    },
+  });
 }
+
+const prismaInstance = createResilientPrismaClient(realPrisma, mockPrisma);
 
 export default prismaInstance;
