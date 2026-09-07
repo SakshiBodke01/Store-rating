@@ -1,21 +1,21 @@
-// Store Rating Platform - Prisma Schema (Supabase PostgreSQL Production Database)
+// Store Rating Platform - Prisma Schema (MySQL Database)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  role         String   @default("USER")
-  address      String?
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(191)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         String   @default("USER") @db.VarChar(50)
+  address      String?  @db.Text
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -30,12 +30,12 @@ model User {
 
 model Store {
   id          String   @id @default(uuid())
-  name        String
-  email       String?
-  address     String
-  description String?
-  category    String?  @default("Retail & Services")
-  phone       String?
+  name        String   @db.VarChar(191)
+  email       String?  @db.VarChar(191)
+  address     String   @db.Text
+  description String?  @db.Text
+  category    String?  @default("Retail & Services") @db.VarChar(100)
+  phone       String?  @db.VarChar(50)
   isVerified  Boolean  @default(true) @map("is_verified")
   ownerId     String   @map("owner_id")
   createdAt   DateTime @default(now()) @map("created_at")
@@ -47,15 +47,14 @@ model Store {
 
   @@index([name])
   @@index([ownerId])
-  @@index([address])
   @@index([category])
   @@map("stores")
 }
 
 model Rating {
   id        String   @id @default(uuid())
-  rating    Int // Value from 1 to 5
-  comment   String?
+  rating    Int
+  comment   String?  @db.Text
   userId    String   @map("user_id")
   storeId   String   @map("store_id")
   createdAt DateTime @default(now()) @map("created_at")
