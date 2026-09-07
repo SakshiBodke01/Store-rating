@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
       if (token) {
         try {
           const res = await api.get('/auth/me');
-          if (res.success && res.data) {
+          if (res?.success && res?.data) {
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
           }
@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
-    if (res.success && res.data) {
+    if (res?.success && res?.data) {
       const { user: userData, token: jwtToken } = res.data;
       setToken(jwtToken);
       setUser(userData);
@@ -41,12 +41,12 @@ export function AuthProvider({ children }) {
       localStorage.setItem('user', JSON.stringify(userData));
       return userData;
     }
-    throw new Error(res.message || 'Login failed');
+    throw new Error(res?.message || res?.error?.message || 'Login failed');
   };
 
   const register = async (userData) => {
     const res = await api.post('/auth/register', userData);
-    if (res.success && res.data) {
+    if (res?.success && res?.data) {
       const { user: newUserData, token: jwtToken } = res.data;
       setToken(jwtToken);
       setUser(newUserData);
@@ -54,7 +54,7 @@ export function AuthProvider({ children }) {
       localStorage.setItem('user', JSON.stringify(newUserData));
       return newUserData;
     }
-    throw new Error(res.message || 'Registration failed');
+    throw new Error(res?.message || res?.error?.message || 'Registration failed');
   };
 
   const logout = () => {

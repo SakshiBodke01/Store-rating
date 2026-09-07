@@ -47,6 +47,7 @@ async function request(endpoint, options = {}) {
       throw error;
     }
 
+    return data;
   } catch (err) {
     console.error(`API Error [${endpoint}]:`, err.message);
     if (err.name === 'TypeError' && (err.message === 'Failed to fetch' || err.message.includes('fetch'))) {
