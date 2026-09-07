@@ -2,9 +2,10 @@
   "name": "store-rating-platform",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Store Rating Platform - Monorepo root",
   "scripts": {
-    "build": "cd backend && npm install && npx prisma generate && cd ../frontend && npm install && npm run build",
+    "build": "npx prisma generate --schema=backend/prisma/schema.prisma && cd backend && npm install && cd ../frontend && npm install && npm run build",
     "setup": "npm install --prefix backend && npm install --prefix frontend",
     "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm --prefix backend run dev",
@@ -12,10 +13,20 @@
     "start:backend": "npm --prefix backend start",
     "start:frontend": "npm --prefix frontend start",
     "build:frontend": "cd frontend && npm install && npm run build",
-    "prisma:generate": "npm --prefix backend run prisma:generate",
+    "prisma:generate": "npx prisma generate --schema=backend/prisma/schema.prisma",
     "lint": "npm run lint:backend && npm run lint:frontend",
     "lint:backend": "npm --prefix backend run lint",
     "lint:frontend": "npm --prefix frontend run lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "prisma": "^6.4.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
